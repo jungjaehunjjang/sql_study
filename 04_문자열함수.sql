@@ -11,8 +11,8 @@ dual이라는 테이블은 sys가 소유하는 오라클의 표준 테이블로서,
 */
 
 SELECT
-    'abcDEF', lower('abcDEF'), upper('abcDEF')
-FROM
+ 'abcDEF', lower('abcDEF'), upper('abcDEF')
+ FROM
     dual;
     
 SELECT
@@ -25,20 +25,21 @@ FROM employees;
 SELECT last_name FROM employees
 WHERE LOWER(last_name) = 'austin';
 
---length(길이), instr(문자 찾기, 없으면 0을 반환, 있으면 인덱스 값)
+-- length(길이), instr(문자 찾기, 없으면 0을 반환, 있으면 인덱스 값)
 SELECT
-    'abcdef', LENGTH('abcdef'), INSTR('abcdef', 'z')
+    'abcDEF', LENGTH('abcDEF'), INSTR('abcDEF', 'z')
 FROM dual;
 
 SELECT
     first_name, LENGTH(first_name), INSTR(first_name, 'a')
 FROM employees;
 
---substr(자를 문자열, 시작 인텍스, 길이), concat(문자 연결)
---substr(자를 문자열, 시작 인덱스) -> 문자열 끝까지.
+-- substr(자를 문자열, 시작 인덱스, 길이), concat(문자 연결)
+-- substr(자를 문자열, 시작 인덱스) -> 문자열 끝까지
+-- 인덱스 1부터 시작
 SELECT
-    'abcdef' AS ex,
-    SUBSTR('abcdef', 1, 4),
+    'abcdef' As ex,
+    SUBSTR('abcdef', 2, 3),
     CONCAT('abc', 'def')
 FROM dual;
 
@@ -48,55 +49,52 @@ SELECT
     CONCAT(first_name, last_name)
 FROM employees;
 
---LPAD, RPAD(좌, 우측 지정 문자열로 채우기)
+-- LAPD, RPAD(좌, 우측 지정 문자열로 채우기)
 SELECT
     LPAD('abc', 10, '*'),
     RPAD('abc', 10, '*')
 FROM dual;
 
---LTRIM(), RTRIM(), TRIM() 공백 제거
---LTRIM(param1, param2) -> param2의 값을 param1에서 찾아서 제거.(왼쪽부터)
---RTRIM(param1, param2) -> param2의 값을 param1에서 찾아서 제거.(오른쪽부터)
-
+-- LTRIM(), RTRIM(), TRIM() 공백 제거
+-- LTRIM(param1, param2) -> param2의 값을 param1에서 찾아서 제거, (왼쪽부터)
+-- RTRIM(param1, param2) -> param2의 값을 param1에서 찾아서 제거, (오른쪽부터)
 SELECT LTRIM('javascript_java', 'java') FROM dual;
-SELECT RTRIM('javascript_java', 'java') FROM dual;
-SELECT TRIM('     java     ')FROM dual;
+SELECT RTRIM('javascript_java', 'java') FROM dual; 
+SELECT TRIM('   java    ') FROM dual;
 
--- replace()
+--replace() 
 SELECT
-    REPLACE('My dream is president', 'president', 'programmer')
+    REPLACE('MY dream is a president', 'president', 'programmer')
 FROM dual;
 
 SELECT
-    REPLACE(REPLACE('My dream is president', 'president', 'programmer'), ' ', '')
+    REPLACE(REPLACE('MY dream is a president', 'president', 'programmer'), ' ', '')
 FROM dual;
 
 SELECT
     REPLACE(CONCAT('hello', ' world!'), '!', '?')
 FROM dual;
 
-
-
 /*
 문제 1.
-EMPLOYEES 테이블에서 이름, 입사일자 컬럼으로 변경(별칭)해서 이름순으로 오름차순 출력 합니다.
-조건 1) 이름 컬럼은 first_name, last_name을 붙여서 출력합니다.(CONCAT)
-조건 2) 입사일자 컬럼은 xx/xx/xx로 저장되어 있습니다. xxxxxx형태로 변경해서 출력합니다.(REPLACE)
+EMPLOYEES 테이블에서 이름, 입사일자 컬럼으로 변경해서 이름순으로 오름차순 출력 합니다.(hire_date를 입사일자로)
+조건 1) 이름 컬럼은 first_name, last_name을 붙여서 출력합니다. (concat)
+조건 2) 입사일자 컬럼은 xx/xx/xx로 저장되어 있습니다. xxxxxx형태로 변경해서 출력합니다. (replace)
 */
 SELECT
-    CONCAT(first_name, last_name) AS 이름,
-    REPLACE(hire_date, '/', '') AS 입사일자
+    CONCAT(first_name, last_name) AS 이름, REPLACE(hire_date, '/', '') AS 입사일자
 FROM employees;
 
 /*
-문제 2.
+문제 2.                                 
 EMPLOYEES 테이블에서 phone_number컬럼은 ###.###.####형태로 저장되어 있다
-여기서 처음 세 자리 숫자 대신 서울 지역변호 (02)를 붙여 
-전화 번호를 출력하도록 쿼리를 작성하세요. (CONCAT, SUBSTR,사용)
+여기서 처음 세 자리 숫자 대신 서울 지역변호 (02)를 붙여 (02).###.####  02#######
+전화 번호를 출력하도록 쿼리를 작성하세요. (CONCAT, SUBSTR,)
 */
 SELECT
-    REPLACE(CONCAT('(02)',(SUBSTR(phone_number,3))),'.','') AS phone_number
+    CONCAT('(02)',SUBSTR(phone_number, 4))
 FROM employees;
+
 /*
 문제 3. 
 EMPLOYEES 테이블에서 JOB_ID가 it_prog인 사원의 이름(first_name)과 급여(salary)를 출력하세요.
@@ -107,9 +105,8 @@ EMPLOYEES 테이블에서 JOB_ID가 it_prog인 사원의 이름(first_name)과 급여(salary)를
 이 열의 열 별칭은 salary입니다.(힌트 : lpad 이용)
 */
 SELECT
-    (RPAD(RPAD(first_name,3,'*'),10,'*'))AS name,
-    LPAD(salary,10,'*')AS salary
+     RPAD(SUBSTR(first_name, 1,3),10,'*') As name,
+     LPAD(salary,10,'*')
 FROM employees
-WHERE LOWER(job_id) ='it_prog';
-
+WHERE LOWER(JOB_ID) ='it_prog';
 
